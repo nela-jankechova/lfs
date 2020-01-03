@@ -16,25 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package ca.sickkids.ccm.lfs.commons.internal;
+package ca.sickkids.ccm.lfs.commons.spi;
 
 import javax.script.Bindings;
 
 import org.apache.sling.scripting.sightly.pojo.Use;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import ca.sickkids.ccm.lfs.commons.spi.VersionFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * VersionUse allows you to expose the version of LFS from HTL, as part of the Use API.
  *
  * @version $Id$
  */
+@Component()
 public class VersionFinderUse implements Use
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFinderUse.class);
+
     // Store the version as a string
-    private String content;
+    private String version;
 
     @Reference
     private VersionFinder versionFinderHandler;
@@ -42,8 +46,8 @@ public class VersionFinderUse implements Use
     @Override
     public void init(Bindings bindings)
     {
-        /*ComponentContext context = (ComponentContext) bindings.get("componentContext");
-        this.version = this.findVersion(context);*/
+        ComponentContext context = (ComponentContext) bindings.get("componentContext");
+        this.version = this.findVersion(context);
     }
 
     /**
@@ -52,9 +56,13 @@ public class VersionFinderUse implements Use
      * @param context the context this instance was initialized in.
      * @return The version of LFS
      */
-    @SuppressWarnings("unused")
     private String findVersion(ComponentContext context)
     {
+        LOGGER.warn("findVersion initiated");
+        if (this.versionFinderHandler == null) {
+            LOGGER.warn("No reference to VersionFinder!!");
+        }
+        this.versionFinderHandler.findVersion(context);
         return this.versionFinderHandler.findVersion(context).toString();
     }
 
@@ -63,8 +71,8 @@ public class VersionFinderUse implements Use
      *
      * @return The version of LFS
      */
-    public String getContent()
+    public String getVersion()
     {
-        return this.content;
+        return this.version;
     }
 }

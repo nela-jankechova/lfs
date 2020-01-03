@@ -35,7 +35,7 @@
     ca.sickkids.ccm.lfs/lfs-permissions-provider/${lfs.version}
 
     # Common Utilities
-    ca.sickkids.ccm.lfs/lfs-utils/${lfs.version}
+    ca.sickkids.ccm.lfs/lfs-utils/${lfs.version}/slingfeature/slingfeature
 
     # UI modules
     ca.sickkids.ccm.lfs/lfs-commons/${lfs.version}/slingfeature/slingfeature

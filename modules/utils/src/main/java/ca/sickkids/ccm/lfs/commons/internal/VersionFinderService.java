@@ -22,6 +22,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.sickkids.ccm.lfs.commons.spi.VersionFinder;
 
@@ -40,12 +42,9 @@ public class VersionFinderService implements VersionFinder
      */
     public static final String VERSION_BUNDLE = "ca.sickkids.ccm.lfs.commons";
 
-    /**
-     * Find the version of LFS in this instance.
-     *
-     * @param context the context this instance was initialized in.
-     * @return The version of LFS
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionFinderService.class);
+
+    @Override
     public Version findVersion(ComponentContext context)
     {
         // Obtain the version from the version bundle
@@ -56,7 +55,9 @@ public class VersionFinderService implements VersionFinder
                 return bundle.getVersion();
             }
         }
+
         // Could not find a bundle
+        LOGGER.warn("Failed to find bundle: {}", VERSION_BUNDLE);
         return null;
     }
 }
