@@ -19,7 +19,6 @@
 package ca.sickkids.ccm.lfs.commons.spi;
 
 import org.osgi.framework.Version;
-import org.osgi.service.component.ComponentContext;
 
 /**
  * Service interface used by {@link ca.sickkids.ccm.lfs.commons.internal.VersionFinderService} to determine
@@ -30,9 +29,9 @@ import org.osgi.service.component.ComponentContext;
 public interface VersionFinder
 {
     /**
-     * Finds the installed version of LFS.
-     * @param context A reference to any OSGi ComponentContext.
+     * Finds the installed version of LFS. This searches through all of the OSGi bundles for the version.
+     *
      * @return The installed version of LFS
      */
-    Version findVersion(ComponentContext context);
+    Version getVersion();
 }

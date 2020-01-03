@@ -18,61 +18,52 @@
  */
 package ca.sickkids.ccm.lfs.commons.spi;
 
-import javax.script.Bindings;
+import java.io.IOException;
+import java.io.Writer;
 
-import org.apache.sling.scripting.sightly.pojo.Use;
-import org.osgi.service.component.ComponentContext;
+import javax.servlet.Servlet;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * VersionUse allows you to expose the version of LFS from HTL, as part of the Use API.
+ * VersionFinderServlet allows you to expose the version of LFS from a servlet.
  *
  * @version $Id$
  */
-@Component()
-public class VersionFinderUse implements Use
+@Component(service = { Servlet.class })
+@SlingServletResourceTypes(
+    resourceTypes = { "lfs/versionFinder" }
+    )
+public class VersionFinderServlet extends SlingSafeMethodsServlet
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(VersionFinderUse.class);
 
-    // Store the version as a string
-    private String version;
+    private static final long serialVersionUID = -6068156942302219324L;
 
     @Reference
     private VersionFinder versionFinderHandler;
 
     @Override
-    public void init(Bindings bindings)
+    public void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response) throws IOException
     {
-        ComponentContext context = (ComponentContext) bindings.get("componentContext");
-        this.version = this.findVersion(context);
-    }
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
 
-    /**
-     * Find the version of LFS in this instance.
-     *
-     * @param context the context this instance was initialized in.
-     * @return The version of LFS
-     */
-    private String findVersion(ComponentContext context)
-    {
         LOGGER.warn("findVersion initiated");
         if (this.versionFinderHandler == null) {
             LOGGER.warn("No reference to VersionFinder!!");
         }
-        this.versionFinderHandler.findVersion(context);
-        return this.versionFinderHandler.findVersion(context).toString();
-    }
+        String version = this.versionFinderHandler.getVersion().toString();
 
-    /**
-     * Get the version of LFS in this instance.
-     *
-     * @return The version of LFS
-     */
-    public String getVersion()
-    {
-        return this.version;
+        final Writer out = response.getWriter();
+        out.write(version);
+        out.close();
     }
 }
