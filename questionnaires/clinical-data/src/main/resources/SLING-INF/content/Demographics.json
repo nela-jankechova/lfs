@@ -12,6 +12,62 @@
     "maxAnswers": 1,
     "dataType": "text"
   },
+  "test_question": {
+    "jcr:primaryType": "lfs:Question",
+    "text": "Test multiple choice widget",
+    "minAnswers": 0,
+    "maxAnswers": 0,
+    "dataType": "text",
+    "displayMode": "list+input",
+    "o1" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 1",
+      "value": "o1"
+    },
+    "o2" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 2",
+      "value": "o2"
+    },
+    "o3" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 3",
+      "value": "o3"
+    },
+    "o4" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 4",
+      "value": "o4"
+    }
+  },
+  "test_question2": {
+    "jcr:primaryType": "lfs:Question",
+    "text": "Test simple choice widget",
+    "minAnswers": 1,
+    "maxAnswers": 1,
+    "dataType": "text",
+    "displayMode": "list+input",
+    "o1" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 1",
+      "value": "o1"
+    },
+    "o2" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 2",
+      "value": "o2"
+    },
+    "o3" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 3",
+      "value": "o3"
+    },
+    "o4" : {
+      "jcr:primaryType": "lfs:AnswerOption",
+      "label" : "Option 4",
+      "value": "o4"
+    }
+  },
   "gender": {
     "jcr:primaryType": "lfs:Question",
     "text": "Gender",
