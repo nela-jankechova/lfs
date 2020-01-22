@@ -66,10 +66,9 @@ function MultipleChoice(props) {
 
   let selectOption = (id, name, checked = false) => {
     if (isRadio) {
-      let defaultOption = defaults.filter((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name})[0];
-console.log(defaultOption);
+      let defaultOption = defaults.filter((option) => {return option[VALUE_POS] === name || option[LABEL_POS] === name})[0];
       if (defaultOption) {
-        setSelection([[defaultOption[0], defaultOption[1]]]);
+        setSelection([[defaultOption[LABEL_POS], defaultOption[VALUE_POS]]]);
         // Selected the matching value, we no longer need the input
         return true;
       } else {
@@ -91,19 +90,18 @@ console.log(defaultOption);
 
     // Do not add duplicates
     if (selection.some(element => {return element[VALUE_POS] === id || element[LABEL_POS] === name})) {
+console.log("Do not add duplicates: " + id + ' ' + name)
       return;
     }
 
     let newSelection = selection.slice();
 
     // Check if any of the predefined options matches the user input. If yes, select it instead of adding a new entry
-    let existingOptions = options.filter((option) => {
+    let defaultOption = defaults.filter((option) => {
       return (option[VALUE_POS] === id || option[LABEL_POS] === name)
-    });
-    if (existingOptions.length > 0) {
-      newSelection.push([existingOptions[0][LABEL_POS], existingOptions[0][VALUE_POS]]);
-      console.log(existingOptions[0]);
-      console.log(LABEL_POS + ' ' + VALUE_POS);
+    })[0];
+    if (defaultOption) {
+      newSelection.push([defaultOption[LABEL_POS], defaultOption[VALUE_POS]]);
     } else {
       // Otherwise, add a new entry
       newSelection.push([name, id]);
@@ -114,9 +112,7 @@ console.log(defaultOption);
   let unselect = (id, name) => {
     return setSelection(selection.filter(
       (element) => {
-console.log(element);
-console.log(!(element[VALUE_POS] === id && element[LABEL_POS] === name));
-        return !(element[VALUE_POS] === id && element[LABEL_POS] === name)
+        return !(element[VALUE_POS] == id && element[LABEL_POS] == name)
       }
     ));
   }
@@ -193,7 +189,6 @@ console.log(!(element[VALUE_POS] === id && element[LABEL_POS] === name));
   let selectNonGhostOption = (...args) => {
     // Clear the ghost input
     onChange && onChange(ghostSelected && !isRadio ? ghostName : undefined);
-console.log(args);
     selectOption(...args);
   }
 
@@ -286,18 +281,15 @@ function generateDefaultOptions(defaults, selection, disabled, isRadio, onClick,
       <StyledResponseChild
         id={childData[VALUE_POS]}
         key={"value-"+childData[VALUE_POS]}
-        name={childData[LABEL_POS] + " --> " + selection.some((sel) => {
-            return sel[0] === childData[0] || sel[1] === childData[1]
-        })}
+        name={childData[LABEL_POS]}
         checked={selection.some((sel) => {
-            console.log("CHECKED? Defaults/selection/crt_default/crt_sel/isselected");
-            console.log(defaults);
-            console.log(selection);
-            console.log(childData);
-            console.log(sel);
-            console.log(sel[0] === childData[0] || sel[1] === childData[1]);
-            return sel[0] === childData[0] || sel[1] === childData[1]
-        })}
+//            console.log("CHECKED? Defaults/selection/crt_default/crt_sel/isselected");
+//            console.log(defaults);
+//            console.log(selection);
+//            console.log(childData);
+//            console.log(sel);
+//            console.log(sel[0] === childData[0] || sel[1] === childData[1]);
+            return (sel[LABEL_POS] == childData[LABEL_POS] || sel[VALUE_POS] == childData[VALUE_POS])})}
         disabled={disabled}
         onClick={onClick}
         onDelete={onDelete}
