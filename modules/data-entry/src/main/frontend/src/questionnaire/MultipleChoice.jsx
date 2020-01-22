@@ -66,8 +66,17 @@ function MultipleChoice(props) {
 
   let selectOption = (id, name, checked = false) => {
     if (isRadio) {
-      setSelection([[name, id]]);
-      return;
+      let defaultOption = defaults.filter((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name})[0];
+console.log(defaultOption);
+      if (defaultOption) {
+        setSelection([[defaultOption[0], defaultOption[1]]]);
+        // Selected the matching value, we no longer need the input
+        return true;
+      } else {
+        setSelection([[name, id]]);
+        // Don't clear the input, we're still using it:
+        return false;
+      }
     }
 
     // If the element was already checked, remove it instead
@@ -88,12 +97,13 @@ function MultipleChoice(props) {
     let newSelection = selection.slice();
 
     // Check if any of the predefined options matches the user input. If yes, select it instead of adding a new entry
-    let existingOptions = all_options.filter((option) => {
+    let existingOptions = options.filter((option) => {
       return (option[VALUE_POS] === id || option[LABEL_POS] === name)
     });
     if (existingOptions.length > 0) {
       newSelection.push([existingOptions[0][LABEL_POS], existingOptions[0][VALUE_POS]]);
       console.log(existingOptions[0]);
+      console.log(LABEL_POS + ' ' + VALUE_POS);
     } else {
       // Otherwise, add a new entry
       newSelection.push([name, id]);
@@ -104,6 +114,8 @@ function MultipleChoice(props) {
   let unselect = (id, name) => {
     return setSelection(selection.filter(
       (element) => {
+console.log(element);
+console.log(!(element[VALUE_POS] === id && element[LABEL_POS] === name));
         return !(element[VALUE_POS] === id && element[LABEL_POS] === name)
       }
     ));
@@ -115,9 +127,10 @@ function MultipleChoice(props) {
   }
 
   // Add a non-default option
+  // Returns whether an option was added (true) or a matching option already existed (false)
   let addOption = (id, name) => {
-    if (options.filter((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name}).length === 0 &&
-        defaults.filter((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name}).length === 0) {
+    if ( !options.some((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name}) &&
+        !defaults.some((option) => {return option[VALUE_POS] === id || option[LABEL_POS] === name})) {
       let newOptions = options.slice();
       newOptions.push([name, id, false]);
       setOptions(newOptions);
@@ -137,9 +150,9 @@ function MultipleChoice(props) {
 
   let acceptEnteredOption = () => {
     if (isRadio) {
-      selectOption(ghostValue, ghostName);
+      selectOption(ghostValue, ghostName) && setGhostName("");
     } else if (maxAnswers !== 1 && !error && ghostName !== "") {
-      // If we can select multiple and are not in error, add this as a possible input
+      // If we can select multiple and are not in error, add this option (if not alreday available) and ensure it's selected
       addOption(ghostName, ghostName);
       selectOption(ghostName, ghostName);
       // Clear the ghost
@@ -180,6 +193,7 @@ function MultipleChoice(props) {
   let selectNonGhostOption = (...args) => {
     // Clear the ghost input
     onChange && onChange(ghostSelected && !isRadio ? ghostName : undefined);
+console.log(args);
     selectOption(...args);
   }
 
@@ -271,9 +285,19 @@ function generateDefaultOptions(defaults, selection, disabled, isRadio, onClick,
     return (
       <StyledResponseChild
         id={childData[VALUE_POS]}
-        key={childData[VALUE_POS]}
-        name={childData[LABEL_POS]}
-        checked={selection.filter((sel) => {return sel[LABEL_POS] === childData[LABEL_POS] || sel[VALUE_POS] === childData[VALUE_POS]}).lenght > 0}
+        key={"value-"+childData[VALUE_POS]}
+        name={childData[LABEL_POS] + " --> " + selection.some((sel) => {
+            return sel[0] === childData[0] || sel[1] === childData[1]
+        })}
+        checked={selection.some((sel) => {
+            console.log("CHECKED? Defaults/selection/crt_default/crt_sel/isselected");
+            console.log(defaults);
+            console.log(selection);
+            console.log(childData);
+            console.log(sel);
+            console.log(sel[0] === childData[0] || sel[1] === childData[1]);
+            return sel[0] === childData[0] || sel[1] === childData[1]
+        })}
         disabled={disabled}
         onClick={onClick}
         onDelete={onDelete}
