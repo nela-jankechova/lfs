@@ -90,7 +90,6 @@ function MultipleChoice(props) {
 
     // Do not add duplicates
     if (selection.some(element => {return element[VALUE_POS] === id || element[LABEL_POS] === name})) {
-console.log("Do not add duplicates: " + id + ' ' + name)
       return;
     }
 
@@ -112,7 +111,7 @@ console.log("Do not add duplicates: " + id + ' ' + name)
   let unselect = (id, name) => {
     return setSelection(selection.filter(
       (element) => {
-        return !(element[VALUE_POS] == id && element[LABEL_POS] == name)
+        return !(element[VALUE_POS] === id && element[LABEL_POS] === name)
       }
     ));
   }
@@ -147,6 +146,7 @@ console.log("Do not add duplicates: " + id + ' ' + name)
   let acceptEnteredOption = () => {
     if (isRadio) {
       selectOption(ghostValue, ghostName) && setGhostName("");
+      inputEl && inputEl.blur();
     } else if (maxAnswers !== 1 && !error && ghostName !== "") {
       // If we can select multiple and are not in error, add this option (if not alreday available) and ensure it's selected
       addOption(ghostName, ghostName);
@@ -282,14 +282,7 @@ function generateDefaultOptions(defaults, selection, disabled, isRadio, onClick,
         id={childData[VALUE_POS]}
         key={"value-"+childData[VALUE_POS]}
         name={childData[LABEL_POS]}
-        checked={selection.some((sel) => {
-//            console.log("CHECKED? Defaults/selection/crt_default/crt_sel/isselected");
-//            console.log(defaults);
-//            console.log(selection);
-//            console.log(childData);
-//            console.log(sel);
-//            console.log(sel[0] === childData[0] || sel[1] === childData[1]);
-            return (sel[LABEL_POS] == childData[LABEL_POS] || sel[VALUE_POS] == childData[VALUE_POS])})}
+        checked={selection.some((sel) => {return (sel[LABEL_POS] === childData[LABEL_POS] || sel[VALUE_POS] === childData[VALUE_POS])})}
         disabled={disabled}
         onClick={onClick}
         onDelete={onDelete}
@@ -304,8 +297,7 @@ var StyledResponseChild = withStyles(QuestionnaireStyle)(ResponseChild);
 
 // One option (either a checkbox or radiobox as appropriate)
 function ResponseChild(props) {
-  const {classes, name, id, isDefault, onClick, disabled, isRadio, onDelete} = props;
-  const [checked, setCheck] = useState(props.checked);
+  const {classes, checked, name, id, isDefault, onClick, disabled, isRadio, onDelete} = props;
 
   return (
     <React.Fragment>
@@ -326,7 +318,7 @@ function ResponseChild(props) {
                   (
                     <Checkbox
                       checked={checked}
-                      onChange={() => {onClick(id, name, checked); setCheck(!checked);}}
+                      onChange={() => {onClick(id, name, checked)}}
                       disabled={!checked && disabled}
                       className={classes.checkbox}
                     />
