@@ -179,6 +179,12 @@ const questionnaireStyle = theme => ({
     noteSection: {
         display: "block",
         marginLeft: theme.spacing(6)
+    },
+    NCRTooltip: {
+        color: theme.palette.primary.main
+    },
+    NCRLoadingIndicator: {
+        disable: "flex"
     }
 });
 
