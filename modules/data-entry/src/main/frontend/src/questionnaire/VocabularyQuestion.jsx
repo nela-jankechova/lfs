@@ -83,9 +83,6 @@ function VocabularyQuestion(props) {
         source = {sourceVocabulary}
         {...rest}
       />
-      <NCRNote
-        vocabulary = {sourceVocabulary}
-        />
     </Question>);
 }
 
