@@ -179,47 +179,51 @@ var NodeMenu = Class.create({
           }
         });
       }
-    });
+    });*/
     // genes
-    this.form.querySelectorAll('input.suggest-genes').forEach(function(item) {
-      if (!item._p_hasClassName('initialized')) {
-        var geneServiceURL = ""; // FIXME: new XWiki.Document('GeneNameService', 'PhenoTips').getURL('get', 'outputSyntax=plain');
-        item._suggest = new PhenoTips.widgets.Suggest(item, {
-          script: geneServiceURL + '&json=true&',
-          varname: 'q',
-          noresults: 'No matching terms',
-          resultsParameter : 'docs',
-          json: true,
-          resultId : 'symbol',
-          resultValue : 'symbol',
-          resultInfo : {},
-          enableHierarchy: false,
-          tooltip :false,
-          fadeOnClear : false,
-          timeout : 30000,
-          parentContainer : $('body')
-        });
-        if (item._p_hasClassName('multi') && typeof(PhenoTips.widgets.SuggestPicker) != 'undefined') {
-          item._suggestPicker = new PhenoTips.widgets.SuggestPicker(item, item._suggest, {
-            'showKey' : false,
-            'showTooltip' : false,
-            'showDeleteTool' : true,
-            'enableSort' : false,
-            'showClearTool' : true,
-            'inputType': 'hidden',
-            'listInsertionElt' : 'input',
-            'listInsertionPosition' : 'after',
-            'acceptFreeText' : true
+    if (SuggestWidget && SuggestPicker) {
+      this.form.querySelectorAll('input.suggest-genes').forEach(function(item) {
+        if (!item._p_hasClassName('initialized')) {
+          var geneServiceURL = ""; // FIXME: new XWiki.Document('GeneNameService', 'PhenoTips').getURL('get', 'outputSyntax=plain');
+          item._suggest = new SuggestWidget(item, {
+            script: geneServiceURL + '&json=true&',
+            varname: 'q',
+            noresults: 'No matching terms',
+            resultsParameter : 'docs',
+            json: true,
+            resultId : 'symbol',
+            resultValue : 'symbol',
+            resultInfo : {},
+            enableHierarchy: false,
+            tooltip :false,
+            fadeOnClear : false,
+            timeout : 30000,
+            parentContainer : $('body')
+          });
+          if (item._p_hasClassName('multi') && typeof(PhenoTips.widgets.SuggestPicker) != 'undefined') {
+            item._suggestPicker = new SuggestPicker(item, item._suggest, {
+              'showKey' : false,
+              'showTooltip' : false,
+              'showDeleteTool' : true,
+              'enableSort' : false,
+              'showClearTool' : true,
+              'inputType': 'hidden',
+              'listInsertionElt' : 'input',
+              'listInsertionPosition' : 'after',
+              'acceptFreeText' : true
+            });
+          }
+          item._p_addClassName('initialized');
+          PObserveEvent('ms:suggest:containerCreated', function(event) {
+            if (event.memo && event.memo.suggest === item._suggest) {
+              item._suggest.container._p_setStyle({'overflow': 'auto', 'maxHeight': getDocumentHeight() - item._suggest.container._p_cumulativeOffset().top + 'px'});
+            }
           });
         }
-        item._p_addClassName('initialized');
-        PObserveEvent('ms:suggest:containerCreated', function(event) {
-          if (event.memo && event.memo.suggest === item._suggest) {
-            item._suggest.container._p_setStyle({'overflow': 'auto', 'maxHeight': getDocumentHeight() - item._suggest.container._p_cumulativeOffset().top + 'px'});
-          }
-        });
-      }
-    });
+      });
+    }
+    // FIXME
+    /*
     // HPO terms
     this.form.querySelectorAll('input.suggest-hpo').forEach(function(item) {
       if (!item._p_hasClassName('initialized')) {
